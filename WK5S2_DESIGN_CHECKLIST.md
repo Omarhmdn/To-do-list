@@ -1,10 +1,10 @@
 # To-Do List Application - Design Document
 
-**Team Name**: _________________
+**Team Name**: V.O.L.T
 
-**Team Members**: _________________
+**Team Members**: Omar Hamdan, Lucas Clowe :) , Vishnu Pandaraparambath, Taiyler Popat
 
-**Date**: _________________
+**Date**: 30/10/2025
 
 ---
 
@@ -14,47 +14,53 @@
 After exploring existing to-do list applications (Microsoft To-Do, Trello, GitHub Projects, etc.), we observed the following common features:
 
 **What can these applications do?**
--
--
--
+- Add Task
+- Remove Task
+- Mark/Unmark as completed
+- Display List
+- Sort
 
 **What data do they store?**
--
--
--
+- Tasks
+- State (completed/uncompleted)
+- Deadline/date
 
 **How do they display data?**
--
--
--
+- Sorted by Input (Stack)
+- Sorted by completion (Stack)
+- Sorted by Deadline/due date
 
 ---
 
 ### 1.2 Essential Features
 List the features your to-do list MUST have to be functional:
 
-1.
-2.
-3.
-4.
-5.
+1. Display
+2. Add task
+3. Remove Task
 
 **Why are these essential?**
-
-
----
+They are the important and basic functions of a to-do list, allowing a user to add, remove, display, mark state of completion
+--- 
 
 ### 1.3 Desirable Features
 List nice-to-have features that would enhance the application but aren't strictly necessary:
 
-1.
-2.
-3.
-4.
-
+1. Sorting function
+2. Editting an existing task
+3. Completed/uncompleted
+4. Reminder (using emails)
+5. Log in Feature/multiple uses
+6. Undo-Redo
 ---
 
 ## 2. Data Structure Design
+
+A dictionary to store the categories where the key is the category (name of to-do list(s)) and value is a list of lists to allow mutability.
+
+The list is to store the values of the to-do list along with Boolean to check if its done or not, along with the date and time.
+
+Stack to undo and redo choices.
 
 ### 2.1 Task Data
 What information does each individual task need to store?
