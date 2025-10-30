@@ -58,6 +58,8 @@ List nice-to-have features that would enhance the application but aren't strictl
 
 List of lists in a dictionary to have multiple to-do lists where the name is the key and the items in the list are the values
 Stack to undo and redo choices.
+Possible user input function later on.
+
 
 ### 2.1 Task Data
 What information does each individual task need to store?
