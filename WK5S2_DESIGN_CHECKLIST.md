@@ -56,10 +56,7 @@ List nice-to-have features that would enhance the application but aren't strictl
 
 ## 2. Data Structure Design
 
-A dictionary to store the categories where the key is the category (name of to-do list(s)) and value is a list of lists to allow mutability.
-
-The list is to store the values of the to-do list along with Boolean to check if its done or not, along with the date and time.
-
+List of lists in a dictionary to have multiple to-do lists where the name is the key and the items in the list are the values
 Stack to undo and redo choices.
 
 ### 2.1 Task Data
