@@ -8,7 +8,7 @@ def load_list(Current_List, list_loaded, dir, lists_path):
 
     with open(os.path.join(lists_path, file_name), 'r') as f:
         items = f.read().splitlines()
-        Current_List = set(items)
+        Current_List = [items]
 
     print(f"\nLoaded {file_name}. Current tasks:")
     display_list(Current_List)
