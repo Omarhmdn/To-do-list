@@ -74,3 +74,55 @@ def create_or_add_to_existing_list(list_loaded, Current_List, file_name, lists_p
         else:
             running = False
             save_list(file_name, Current_List, lists_path)
+
+def display_list(Current_List):
+    if not Current_List:
+        print("The list is currently empty.")
+    else:
+        print("\nYour current tasks:")
+        for i, task in enumerate(Current_List, start=1):
+            print(f"{i}. {task}")
+
+import datetime as dt
+from calendar import monthrange
+
+def date_validation():
+    current_year = dt.datetime.today().year
+    while True:
+        due_date = input("Please enter the due date for the task in the format dd/mm/yyyy:").strip().split("/")
+        due_date = list(map(int, due_date))
+        if due_date[2] >= current_year:
+            if 1 <= due_date[1] <= 12:
+                days = monthrange(due_date[2], due_date[1])
+                if due_date[0] <= days[1]:
+                    break
+                else:
+                    continue
+            else:
+                continue
+        else:
+            continue
+    due_date = '/'.join(list(map(str, due_date)))
+    return due_date
+
+def add_task(Current_List):
+    task = input("Please enter the task you would like to add: ").strip().lower()
+    due_date = date_validation()
+    Current_List.append([task, due_date, False])
+    print(f'"{task}" has been successfully added to the list!')
+    return Current_List
+
+def save_list(file_name, Current_List, lists_path):
+    if not file_name:
+        file_name = input("Please choose a filename (Make sure to add .txt at the end): ").strip()
+    file_path = os.path.join(lists_path, file_name)
+
+    with open(file_path, 'w') as f:
+        for item in Current_List:
+            f.write(item + "\n")
+
+    print("Saving the list", end="")
+    for _ in range(3):
+        t.sleep(1)
+        print(".")
+    print("\nList has been saved!\n")
