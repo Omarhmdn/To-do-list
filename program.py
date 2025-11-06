@@ -1,142 +1,146 @@
 import os
 import time as t
-import datetime as dt
-from calendar import monthrange
 from datetime import datetime
 
 def main():
     lists_path = "ToDoLists"
     os.makedirs(lists_path, exist_ok=True)
     Current_List = []
-    dir = os.listdir(lists_path)
     list_loaded = False
 
-    if not dir:
-        choice = input("No to-do lists found.\nType CREATE to make one or QUIT to exit: ").upper().strip()
-        while choice != "CREATE":
-            print(f"Please type CREATE (you typed '{choice}')")
+    dir_files = os.listdir(lists_path)
+    if not dir_files:
+        choice = input("No to-do lists found.\nType 1 to CREATE a new one or 2 to QUIT: ").strip()
+        while choice != "1":
+            print(f"Please type 1 to CREATE (you typed '{choice}')")
             t.sleep(1.5)
-            choice = input("Please enter your choice again: ").upper()
-        create_or_add_to_existing_list(list_loaded, Current_List, None, lists_path)
+            choice = input("Please enter your choice again: ").strip()
+        create_or_add_to_existing_list(Current_List, None, lists_path)
 
     while True:
-        choice = input("You have saved lists.\nType CREATE to make one, LOAD to open, LIST to view all or QUIT to exit: ").upper().strip()
-        if choice == "CREATE":
-            create_or_add_to_existing_list(list_loaded, Current_List, None, lists_path)
-        elif choice == "LOAD":
-            load_list(Current_List, list_loaded, dir, lists_path)
-        elif choice == "LIST":
-            print("\n**Existing lists:**")
-            for name in dir:
+        dir_files = os.listdir(lists_path)
+        print("\nYou have saved lists.")
+        print("1) CREATE a new list")
+        print("2) LOAD an existing list")
+        print("3) LIST all lists")
+        print("4) QUIT")
+        choice = input("Enter your choice (1-4): ").strip()
+        if choice == "1":
+            create_or_add_to_existing_list(Current_List, None, lists_path)
+        elif choice == "2":
+            load_list(Current_List, lists_path)
+        elif choice == "3":
+            print("\n** Existing lists:**")
+            for name in dir_files:
                 print(name)
-        elif choice == "QUIT":
-            exit("Goodbye!")
+        elif choice == "4":
+            print("Goodbye!")
+            break
         else:
             print("Invalid choice! Please try again.")
         t.sleep(1.5)
-        dir = os.listdir(lists_path)
 
-def load_list(Current_List, list_loaded, dir, lists_path):
-    list_loaded = True
+def load_list(Current_List, lists_path):
+    dir_files = os.listdir(lists_path)
     file_name = input("Please enter the full file name (with .txt): ").strip()
-
-    while file_name not in dir:
-        print(f'This is not a file in the directory.\nChoose from the following lists: {dir}')
+    while file_name not in dir_files:
+        print(f"This is not a file in the directory.\nChoose from: {dir_files}")
         file_name = input("Please enter the full file name (with .txt): ").strip()
-
-    with open(os.path.join(lists_path, file_name), 'r') as f:
+    file_path = os.path.join(lists_path, file_name)
+    with open(file_path, 'r') as f:
         items = f.read().splitlines()
-        Current_List = [items]
-
+    # parse each line into task list [task, date, done_bool] or fallback
+    new_list = []
+    for line in items:
+        parts = line.split("||")
+        if len(parts) == 3:
+            # stored as task||date||done_flag
+            task, due_date, done_str = parts
+            done = (done_str == "True")
+            new_list.append([task, due_date, done])
+        else:
+            new_list.append([line, "", False])
+    Current_List.clear()
+    Current_List.extend(new_list)
     print(f"\nLoaded {file_name}. Current tasks:")
     display_list(Current_List)
-    create_or_add_to_existing_list(list_loaded, Current_List, file_name, lists_path)
+    create_or_add_to_existing_list(Current_List, file_name, lists_path)
 
-def create_or_add_to_existing_list(list_loaded, Current_List, file_name, lists_path):
-    running = True
-    if not list_loaded:
+def create_or_add_to_existing_list(Current_List, file_name, lists_path):
+    if file_name is None:
         List_Name = input("Please enter a list name (without .txt): ").strip()
         file_name = List_Name + ".txt"
-        List_Storage = {List_Name: Current_List}
-    else:
-        List_Storage = {"LoadedList": Current_List}
-
-    while running:
-        choice = input("\nChoose one of the following options:\nType ADD to add a task, DELETE to delete a task, SHOW to view tasks, EXIT to exit: ").upper().strip()
-
-        while choice not in ("ADD", "DELETE", "SHOW", "EXIT"):
-            print("ERROR: Invalid Input! Please try again.")
-            t.sleep(1)
-            choice = input("\nChoose one of the following options\nType ADD, DELETE, SHOW, EXIT: ").upper().strip()
-
-        if choice == "ADD":
-            Current_List = add_task(Current_List)
-        elif choice == "DELETE":
-            delete_list(Current_List)
-        elif choice == "SHOW":
+        print(f"Created new list '{file_name}'")
+    while True:
+        print("\nChoose one of the following options:")
+        print("1) ADD a task")
+        print("2) DELETE a task")
+        print("3) SHOW tasks")
+        print("4) EXIT to main menu (and save)")
+        choice = input("Enter your choice (1-4): ").strip()
+        if choice == "1":
+            add_task(Current_List)
+        elif choice == "2":
+            delete_task(Current_List)
+        elif choice == "3":
             display_list(Current_List)
-        else:
-            running = False
+        elif choice == "4":
             save_list(file_name, Current_List, lists_path)
+            break
+        else:
+            print("ERROR: Invalid Input! Please try again.")
+        t.sleep(1)
 
 def display_list(Current_List):
     if not Current_List:
         print("The list is currently empty.")
     else:
         print("\nYour current tasks:")
-        for i, task in enumerate(Current_List, start=1):
-            print(f"{i}. {task}")
-
+        for i, item in enumerate(Current_List, start=1):
+            task, due_date, done = item
+            status = "Done" if done else "Not done"
+            print(f"{i}. Task: {task} | Due: {due_date} | Status: {status}")
 
 def date_validation():
-    user_date = input("Provide date: ")
-    
-    valid = False
-    
-    while not valid:
+    user_date = input("Provide date (DD/MM/YYYY): ").strip()
+    while True:
         try:
-            date = datetime.strptime(user_date, "%d/%m/%Y").strftime("%d/%m/%Y")
-            valid = True
+            datetime.strptime(user_date, "%d/%m/%Y")
             return user_date
         except ValueError:
-            user_date = input("Incorrect date format. Please try again: ")
+            user_date = input("Incorrect date format. Please use DD/MM/YYYY: ").strip()
 
 def add_task(Current_List):
-    task = input("Please enter the task you would like to add: ").strip().lower()
+    task = input("Please enter the task you would like to add: ").strip()
     due_date = date_validation()
     Current_List.append([task, due_date, False])
     print(f'"{task}" has been successfully added to the list!')
-    return Current_List
+
+def delete_task(Current_List):
+    if not Current_List:
+        print("The list is empty. Nothing to delete.")
+        return
+    display_list(Current_List)
+    try:
+        index = int(input("Please enter the task number you would like to delete: ").strip())
+        if 1 <= index <= len(Current_List):
+            removed = Current_List.pop(index-1)
+            print(f'Item "{removed[0]}" has been successfully removed from the list!')
+        else:
+            print("Item number is not in the list!")
+    except ValueError:
+        print("Invalid number entered!")
 
 def save_list(file_name, Current_List, lists_path):
-    if not file_name:
-        file_name = input("Please choose a filename (Make sure to add .txt at the end): ").strip()
     file_path = os.path.join(lists_path, file_name)
-
     with open(file_path, 'w') as f:
-        for item in Current_List:
-            f.write(item + "\n")
-
+        for task, due_date, done in Current_List:
+            f.write(f"{task}||{due_date}||{done}\n")
     print("Saving the list", end="")
     for _ in range(3):
         t.sleep(1)
-        print(".")
+        print(".", end="", flush=True)
     print("\nList has been saved!\n")
-
-def delete_task(Current_List):
-    display_list(Current_List)
-    try:
-        if len(Current_List) > 0:
-            index = int(input("Please enter the task number you would like to delete: ").strip().lower())
-            if index <= len(Current_List):
-                Current_List.pop(index-1)
-                print(f'item has been successfully removed from the list!')
-            else:
-                print(f'item is not in the list!')
-    except:
-        print("The list is empty. Try adding a task instead.")
-
-
 
 if __name__ == '__main__':
     main()
