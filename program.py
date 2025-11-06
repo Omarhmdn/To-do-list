@@ -1,5 +1,8 @@
 import os
 import time as t
+import datetime as dt
+from calendar import monthrange
+
 def main():
     lists_path = "ToDoLists"
     os.makedirs(lists_path, exist_ok=True)
@@ -83,8 +86,6 @@ def display_list(Current_List):
         for i, task in enumerate(Current_List, start=1):
             print(f"{i}. {task}")
 
-import datetime as dt
-from calendar import monthrange
 
 def date_validation():
     current_year = dt.datetime.today().year
@@ -131,9 +132,16 @@ def delete_list():
     f = input("File name: ")
     try:
         t = open(f).read().splitlines()
-        for i, x in enumerate(t): print(i+1, x)
+        for i, x in enumerate(t): 
+            print(i+1, x)
         n = int(input("Task number to delete: ")) - 1
         t.pop(n)
         open(f, "w").write("\n".join(t))
         print("Task deleted!")
-    except: print("Error")
+    except: 
+        print("Error")
+
+
+
+if __name__ == '__main__':
+    main()
