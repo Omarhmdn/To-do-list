@@ -2,6 +2,7 @@ import os
 import time as t
 import datetime as dt
 from calendar import monthrange
+from datetime import datetime
 
 def main():
     lists_path = "ToDoLists"
@@ -88,23 +89,17 @@ def display_list(Current_List):
 
 
 def date_validation():
-    current_year = dt.datetime.today().year
-    while True:
-        due_date = input("Please enter the due date for the task in the format dd/mm/yyyy:").strip().split("/")
-        due_date = list(map(int, due_date))
-        if due_date[2] >= current_year:
-            if 1 <= due_date[1] <= 12:
-                days = monthrange(due_date[2], due_date[1])
-                if due_date[0] <= days[1]:
-                    break
-                else:
-                    continue
-            else:
-                continue
-        else:
-            continue
-    due_date = '/'.join(list(map(str, due_date)))
-    return due_date
+    user_date = input("Provide date: ")
+    
+    valid = False
+    
+    while not valid:
+        try:
+            date = datetime.strptime(user_date, "%d/%m/%Y").strftime("%d/%m/%Y")
+            valid = True
+            return user_date
+        except ValueError:
+            user_date = input("Incorrect date format. Please try again: ")
 
 def add_task(Current_List):
     task = input("Please enter the task you would like to add: ").strip().lower()
@@ -128,18 +123,18 @@ def save_list(file_name, Current_List, lists_path):
         print(".")
     print("\nList has been saved!\n")
 
-def delete_list():
-    f = input("File name: ")
+def delete_task(Current_List):
+    display_list(Current_List)
     try:
-        t = open(f).read().splitlines()
-        for i, x in enumerate(t): 
-            print(i+1, x)
-        n = int(input("Task number to delete: ")) - 1
-        t.pop(n)
-        open(f, "w").write("\n".join(t))
-        print("Task deleted!")
-    except: 
-        print("Error")
+        if len(Current_List) > 0:
+            index = int(input("Please enter the task number you would like to delete: ").strip().lower())
+            if index <= len(Current_List):
+                Current_List.pop(index-1)
+                print(f'item has been successfully removed from the list!')
+            else:
+                print(f'item is not in the list!')
+    except:
+        print("The list is empty. Try adding a task instead.")
 
 
 
