@@ -72,7 +72,7 @@ def create_or_add_to_existing_list(list_loaded, Current_List, file_name, lists_p
         if choice == "ADD":
             Current_List = add_task(Current_List)
         elif choice == "DELETE":
-            delete_task(Current_List)
+            delete_list(Current_List)
         elif choice == "SHOW":
             display_list(Current_List)
         else:
