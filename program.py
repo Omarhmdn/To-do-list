@@ -73,7 +73,9 @@ def create_or_add_to_existing_list(list_loaded, Current_List, file_name, lists_p
             display_list(Current_List)
         else:
             running = False
-            save_list(file_name, Current_List, lists_path)import datetime as dt
+            save_list(file_name, Current_List, lists_path)
+
+import datetime as dt
 from calendar import monthrange
 
 def date_validation():
