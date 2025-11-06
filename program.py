@@ -70,23 +70,19 @@ def create_or_add_to_existing_list(Current_List, file_name, lists_path):
     if file_name is None:
         List_Name = input("Please enter a list name (without .txt): ").strip()
         file_name = List_Name + ".txt"
-        List_Storage = {List_Name: Current_List}
-    else:
-        List_Storage = {"LoadedList": Current_List}
-
-    while running:
-        choice = input("\nChoose one of the following options:\nType ADD to add a task, DELETE to delete a task, SHOW to view tasks, EXIT to exit: ").upper().strip()
-
-        while choice not in ("ADD", "DELETE", "SHOW", "EXIT"):
-            print("ERROR: Invalid Input! Please try again.")
-            t.sleep(1)
-            choice = input("\nChoose one of the following options\nType ADD, DELETE, SHOW, EXIT: ").upper().strip()
-
-        if choice == "ADD":
-            Current_List = add_task(Current_List)
-        elif choice == "DELETE":
-            delete_list(Current_List)
-        elif choice == "SHOW":
+        print(f"Created new list '{file_name}'")
+    while True:
+        print("\nChoose one of the following options:")
+        print("1) ADD a task")
+        print("2) DELETE a task")
+        print("3) SHOW tasks")
+        print("4) EXIT to main menu (and save)")
+        choice = input("Enter your choice (1-4): ").strip()
+        if choice == "1":
+            add_task(Current_List)
+        elif choice == "2":
+            delete_task(Current_List)
+        elif choice == "3":
             display_list(Current_List)
         elif choice == "4":
             save_list(file_name, Current_List, lists_path)
@@ -139,6 +135,7 @@ def save_list(file_name, Current_List, lists_path):
     file_path = os.path.join(lists_path, file_name)
     with open(file_path, 'w') as f:
         for task, due_date, done in Current_List:
+            # store fields separated by || so load can parse
             f.write(f"{task}||{due_date}||{done}\n")
     print("Saving the list", end="")
     for _ in range(3):
